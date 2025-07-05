@@ -1,5 +1,5 @@
 #!/bin/bash
-
+console.log("install.sh runned")
 LOG_FILE="/var/log/pterodactyl-installer.log"
 mkdir -p "$(dirname "$LOG_FILE")"
 touch "$LOG_FILE"
