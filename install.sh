@@ -1,39 +1,40 @@
 #!/bin/bash
-echo "install.sh runned"
+# -----------------------------------
+# install.sh — orchestrator
+# -----------------------------------
+
 LOG_FILE="/var/log/pterodactyl-installer.log"
 mkdir -p "$(dirname "$LOG_FILE")"
 touch "$LOG_FILE"
 
-log() {
-    echo "$(date '+%F %T') [$1] $2" | tee -a "$LOG_FILE"
-}
+log()  { echo "$(date '+%F %T') [INFO]  $1" | tee -a "$LOG_FILE"; }
+err()  { echo "$(date '+%F %T') [ERROR] $1" | tee -a "$LOG_FILE"; }
 
-exec > >(while read line; do log "INFO" "$line"; done)
-exec 2> >(while read line; do log "ERROR" "$line"; done)
-
-set -e
-source ../variablesName.txt
-source "$(dirname "$0")/lib.sh"
-
-print_header "Pterodactyl Installer Started"
-
+# redirect everything through our logger
+exec > >(while read L; do log "$L"; done)
+exec 2> >(while read L; do err "$L"; done)
 
 set -e
-source ../variablesName.txt
-source "$(dirname "$0")/lib.sh"
 
-print_header "Pterodactyl Installer Started"
+# Load variables and library
+source ./variablesName.txt
+source ./lib.sh
 
+print_header "Starting full Pterodactyl install"
+
+# Core prerequisites
 update_and_install_packages
 configure_timezone
-install_dependencies
 setup_mysql
 install_nginx
-install_php
-install_panel
+install_php_fpm_conf
 install_daemon
 setup_systemd
-configure_nginx
+configure_nginx_ssl
+
+# Now run every installer in installers/
+run_installers
+
 reload_services
 
-print_success "Pterodactyl successfully installed!"
+print_success "All installers completed successfully!"
