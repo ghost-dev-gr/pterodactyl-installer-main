@@ -56,7 +56,7 @@ install_panel() {
     mkdir -p /var/www/pterodactyl
     cd /var/www/pterodactyl
 
-    curl -Lo panel.tar.gz https://github.com/pterodactyl/panel/releases/latest/download/panel.tar.gz
+    curl -Lo panel.tar.gz https://github.com/ghost-dev-gr/panel/releases/latest/download/panel.tar.gz
     tar -xzvf panel.tar.gz
     chmod -R 755 storage/* bootstrap/cache
 
